@@ -93,15 +93,36 @@ def autenticar_usuario():
     
     print("\n--- INICIO DE SESIÓN ---")
     
+    # Reiniciar intentos si es nuevo inicio
     if intentos_fallidos > 0:
         print(f"Intentos fallidos previos: {intentos_fallidos}")
     
-    contraseña = input("Contraseña maestra: ")
-    
-    if verificar_contraseña_maestra(contraseña):
-        print("Acceso concedido")
-        from utilidades.registro_actividades import registrar_accion
-        registrar_accion("Usuario autenticado")
-        return True
+    # Dar hasta 3 intentos
+    while intentos_fallidos < 3:
+        contraseña = input("Contraseña maestra: ")
+        
+        # Verificar
+        contraseña_guardada = cargar_texto('data/maestra.txt')
+        contraseña_guardada = contraseña_guardada.strip()
+        hash_ingresado = hashlib.sha256(contraseña.encode()).hexdigest()
+        
+        if hash_ingresado == contraseña_guardada:
+            intentos_fallidos = 0  # Reiniciar contador
+            print("Acceso concedido")
+            from utilidades.registro_actividades import registrar_accion
+            registrar_accion("Usuario autenticado")
+            return True
+        else:
+            intentos_fallidos += 1
+            print(f"Contraseña incorrecta. Intentos: {intentos_fallidos}/3")
+            
+            if intentos_fallidos >= 3:
+                print("\nSistema bloqueado por seguridad")
+                from utilidades.registro_actividades import registrar_accion
+                registrar_accion("Sistema bloqueado por intentos fallidos")
+                exit()
+            else:
+                # Continuar con siguiente intento
+                continue
     
     return False

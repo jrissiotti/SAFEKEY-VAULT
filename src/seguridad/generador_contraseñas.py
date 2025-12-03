@@ -4,6 +4,7 @@ Generador de Contraseñas - Proyecto Final
 
 import random
 from seguridad.analizador_fuerza import analizar_fuerza
+from utilidades.registro_actividades import registrar_accion
 
 # Caracteres disponibles (definidos manualmente sin usar string)
 LETRAS = "abcdefghijklmnopqrstuvwxyz"
@@ -81,25 +82,92 @@ def _crear_contraseña(longitud):
     return ''.join(contra)
 
 
-def _guardar_contraseña(contra):
-    """Guarda la contraseña en el gestor"""
+def _guardar_contraseña(contraseña):
+    """
+    Guarda una contraseña generada en el gestor.
+    """
     try:
         from core.gestor_contraseñas import agregar_contraseña_directa
         
-        servicio = input("Servicio: ").strip()
-        usuario = input("Usuario: ").strip()
+        print("\n" + "="*40)
+        print("  GUARDAR CONTRASEÑA GENERADA")
+        print("="*40)
         
-        if servicio and usuario:
-            if agregar_contraseña_directa(servicio, usuario, contra, 1):
-                print("Contraseña guardada")
-            else:
-                print("Error al guardar")
+        # LISTA DE SERVICIOS COMUNES (local o importada)
+        servicios_comunes = [
+            "Gmail", "Facebook", "Instagram", "Twitter", "Netflix",
+            "YouTube", "GitHub", "Spotify", "Amazon", "PayPal",
+            "WhatsApp", "Telegram", "Discord", "LinkedIn", "Microsoft",
+            "Dropbox", "Google Drive", "iCloud", "Steam", "Epic Games"
+        ]
+        
+        # MOSTRAR CATÁLOGO
+        print("\nServicios comunes:")
+        for i, servicio in enumerate(servicios_comunes, 1):
+            print(f"  {i:2}. {servicio}")
+        print("  0. Otro (añadir nuevo servicio)")
+        
+        # SELECCIONAR SERVICIO
+        while True:
+            try:
+                opcion = int(input("\nSelecciona un número o 0 para nuevo: "))
+                
+                if opcion == 0:
+                    servicio = input("Nombre del nuevo servicio: ").strip()
+                    if not servicio:
+                        print("El servicio no puede estar vacío")
+                        continue
+                    break
+                
+                elif 1 <= opcion <= len(servicios_comunes):
+                    servicio = servicios_comunes[opcion - 1]
+                    break
+                
+                else:
+                    print("Opción no válida")
+                    
+            except ValueError:
+                print("Ingresa un número válido")
+        
+        # PEDIR USUARIO
+        usuario = input("Usuario/email: ").strip()
+        
+        if not usuario:
+            print("Usuario no puede estar vacío")
+            return
+        
+        # MOSTRAR Y CONFIRMAR CONTRASEÑA
+        print(f"\nContraseña generada: {contraseña}")
+        confirmar = input("¿Usar esta contraseña? (s/n): ").lower().strip()
+        
+        if confirmar != 's':
+            print("Operación cancelada")
+            return
+        
+        # ELEGIR MÉTODO DE CIFRADO
+        print("\nMétodo de cifrado:")
+        print("1. César")
+        print("2. Recursivo")
+        
+        metodo = 1
+        try:
+            opcion_cifrado = input("Opción (1/2): ").strip()
+            if opcion_cifrado == "2":
+                metodo = 2
+        except:
+            print("Usando César por defecto")
+        
+        # GUARDAR
+        if agregar_contraseña_directa(servicio, usuario, contraseña, metodo):
+            print(f"\n✓ Contraseña para '{servicio}' guardada exitosamente")
+            registrar_accion(f"Contraseña generada guardada para '{servicio}'")
         else:
-            print("Faltan datos")
+            print("\nError al guardar la contraseña")
             
-    except ImportError:
-        print("No se puede guardar ahora")
-
+    except KeyboardInterrupt:
+        print("\nOperación cancelada")
+    except Exception as e:
+        print(f"Error: {e}")
 
 def _ver_fortaleza():
     """Analiza la fortaleza de una contraseña"""
