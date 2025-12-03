@@ -7,9 +7,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 def mostrar_menu():
     """Muestra el menú principal"""
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 30)
     print("         MENU PRINCIPAL")
-    print("=" * 50)
+    print("=" * 30)
     print("1. Agregar contraseña")
     print("2. Ver contraseñas")
     print("3. Consultar contraseña")
@@ -23,9 +23,9 @@ def mostrar_menu():
 
 def main():
     """Función principal del programa"""
-    print("=" * 50)
+    print("=" * 30)
     print("     SAFEKEY VAULT+")
-    print("=" * 50)
+    print("=" * 30)
     
     from core.autenticacion import autenticar_usuario
     if not autenticar_usuario():
