@@ -17,6 +17,7 @@ def mostrar_menu():
     print("6. Generar contraseña segura")
     print("7. Verificar integridad")
     print("8. Cambiar contraseña maestra")
+    print("9. Ver registro de actividades")
     print("0. Salir")
 
 def main():
@@ -76,6 +77,9 @@ def main():
         elif opcion == 8:
             from core.autenticacion import cambiar_contraseña_maestra
             cambiar_contraseña_maestra()
+        elif opcion == 9:
+            from utilidades.registro_actividades import mostrar_log
+            mostrar_log()
         
         else:
             print("Opción no válida")

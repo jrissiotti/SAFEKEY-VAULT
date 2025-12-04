@@ -59,6 +59,11 @@ def cambiar_contraseña_maestra():
         print("La contraseña debe tener al menos 6 caracteres")
         return
     
+    # VALIDACIÓN NUEVA: No puede ser igual a la actual
+    if nueva == contraseña_actual:
+        print("La nueva contraseña NO puede ser igual a la actual")
+        return
+    
     if guardar_contraseña_maestra(nueva):
         print("Contraseña cambiada exitosamente")
         from utilidades.registro_actividades import registrar_accion
